@@ -1,0 +1,7 @@
+CREAZIONE NUOVO REPOSITORY:
+1. git init
+2. git add .
+3. git commit -m "any message"
+4. git remote add origin https://github.com/simone-oliverio/property-management.git
+5. git remote set-url origin https://simone-oliverio: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@github.com/simone-oliverio/property-management.git
+6. git push --set-upstream origin master
