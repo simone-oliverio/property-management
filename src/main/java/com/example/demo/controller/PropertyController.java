@@ -57,6 +57,9 @@ public class PropertyController {
     @PutMapping("/properties/{propertyId}")
     public ResponseEntity<PropertyDTO> updateProperty(@RequestBody PropertyDTO propertyDTO, @PathVariable Long propertyId) {
 
+        System.out.println(dummy);
+        System.out.println(dbUrl);
+
         propertyDTO = propertyService.updateProperty(propertyDTO, propertyId);
         ResponseEntity<PropertyDTO> responseEntity = new ResponseEntity<>(propertyDTO, HttpStatus.OK);
 
