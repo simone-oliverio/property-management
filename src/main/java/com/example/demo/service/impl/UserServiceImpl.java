@@ -9,6 +9,8 @@ import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,7 +33,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO login(String user, String password) {
-        return null;
+    public UserDTO login(String email, String password) {
+
+        UserDTO userDTO = null;
+        Optional<UserEntity> userEntityOptional = userRepository.findByOwnerEmailAndPassword(email,password);
+
+        if(userEntityOptional.isPresent()) {
+            userDTO = userConverter.convertEntityToDTO(userEntityOptional.get());
+        }
+
+        return userDTO;
     }
 }
