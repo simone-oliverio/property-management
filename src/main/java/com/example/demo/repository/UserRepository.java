@@ -9,12 +9,12 @@ import java.util.Optional;
 
 public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
-   // Optional<UserEntity> findByOwnerEmailAndPassword(String email, String password);
+   // Optional<UserEntity> findByOwnerEmailAndPassword(String email, String password); ----> FUNZIONA ANCHE SENZA @Query
 
     @Query("SELECT u FROM UserEntity u WHERE u.ownerEmail = :email AND u.password = :password")
     Optional<UserEntity> findByOwnerEmailAndPassword(@Param("email") String email, @Param("password") String password);
 
-    //@Query("SELECT u FROM UserEntity u WHERE u.ownerEmail = :email)
+    @Query("SELECT u FROM UserEntity u WHERE u.ownerEmail = :email")
     Optional<UserEntity> findByOwnerEmail(@Param("email") String email);
 
 
