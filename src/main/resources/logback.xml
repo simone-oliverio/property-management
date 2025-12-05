@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Percorso del file di log principale -->
+    <property name="HOME_LOG" value="logs/app.log"/>
+
+    <!-- Appender su console -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender su file con rolling per dimensione e tempo -->
+    <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- file corrente -->
+        <file>${HOME_LOG}</file>
+
+        <!-- Politica di rolling: dimensione + tempo -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- pattern dei file archiviati -->
+            <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+
+            <!-- dimensione massima di ciascun file archiviato -->
+            <maxFileSize>10MB</maxFileSize>
+
+            <!-- cap totale degli archivi (oltre questo, vengono rimossi i più vecchi) -->
+            <totalSizeCap>20GB</totalSizeCap>
+
+            <!-- giorni di retention -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+
+        <!-- formato delle righe su file -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d %p %c{1} [%t] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Profilo: local -> DEBUG su console -->
+    <springProfile name="local">
+        <root level="DEBUG">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <!-- Profilo: dev -> INFO su file rolling -->
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="FILE-ROLLING"/>
+        </root>
+    </springProfile>
+
+    <!-- Profili: test, acc, prod -> WARN su file rolling -->
+    <springProfile name="test, acc, prod">
+        <root level="WARN">
+            <appender-ref ref="FILE-ROLLING"/>
+        </root>
+    </springProfile>
+
+</configuration>

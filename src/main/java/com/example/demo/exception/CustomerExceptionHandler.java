@@ -1,5 +1,7 @@
 package com.example.demo.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,6 +15,7 @@ import java.util.List;
 @ControllerAdvice
 public class CustomerExceptionHandler {
 
+    private final Logger logger = LoggerFactory.getLogger(CustomerExceptionHandler.class);
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ErrorModel>> handleFieldValidation(MethodArgumentNotValidException manv) {
@@ -22,6 +25,8 @@ public class CustomerExceptionHandler {
         List<FieldError> fieldErrorList = manv.getBindingResult().getFieldErrors();
 
         for (FieldError fe : fieldErrorList) {
+            logger.debug("Inside field validation - level debug: {} - {}", fe.getField(), fe.getDefaultMessage());
+            logger.info("Inside field validation- level info: {} - {}", fe.getField(), fe.getDefaultMessage());
             errorModel = new ErrorModel();
             errorModel.setCode(fe.getField());
             errorModel.setMessage(fe.getDefaultMessage());
@@ -35,7 +40,14 @@ public class CustomerExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<List<ErrorModel>> handleBusinessException(BusinessException bex) {
-        System.out.println("BusinessException is thrown");
+
+        for (ErrorModel em : bex.getErrors()) {
+            logger.debug("BusinessException is thrown - level debug: {} - {}", em.getCode(), em.getMessage());
+            logger.info("BusinessException is thrown - level info: {} - {}", em.getCode(), em.getMessage());
+            logger.warn("BusinessException is thrown - level warn: {} - {}", em.getCode(), em.getMessage());
+            logger.error("BusinessException is thrown - level error: {} - {}", em.getCode(), em.getMessage());
+        }
+
         return new ResponseEntity<List<ErrorModel>>(bex.getErrors(), HttpStatus.BAD_REQUEST);
     }
 
