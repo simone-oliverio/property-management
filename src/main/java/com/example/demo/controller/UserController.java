@@ -2,6 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.UserDTO;
 import com.example.demo.service.UserService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,11 +23,26 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+    @Operation(
+            summary = "Register a new user",
+            description = "This method is used for user registration",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "User created successfully")
+            }
+    )
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> register(
+            @Parameter(
+                    description = "User data",
+                    required = true,
+                    schema = @Schema(implementation = UserDTO.class)
+            )
+            @Valid @RequestBody UserDTO userDTO
+    ) {
         userDTO = userService.register(userDTO);
-        ResponseEntity<UserDTO> responseEntity = new ResponseEntity<>(userDTO, HttpStatus.CREATED);
-        return responseEntity;
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+
     }
 
     @PostMapping("/login")
